@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SmartBank - Application de services financiers en ligne. Consultez votre tableau de bord, simulez un credit et decouvrez nos offres.">
+    <title>SmartBank - Services Financiers</title>
+    <link rel="stylesheet" href="./styles/style.css">
+</head>
+<body>
+
+<div id="root">
+
+    <!-- ==================== VUE : LOGIN ==================== -->
+    <div id="view-login" class="view">
+        <div class="auth-page">
+            <div class="auth-card">
+                <h1>SmartBank</h1>
+                <p class="subtitle">Connectez-vous a votre compte</p>
+
+                <div class="form-group">
+                    <label for="login-email">Adresse email</label>
+                    <input type="email" id="login-email" placeholder="exemple@email.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="login-password">Mot de passe</label>
+                    <input type="password" id="login-password" placeholder="Votre mot de passe">
+                </div>
+
+                <div id="login-error" class="alert-msg hidden"></div>
+
+                <button id="btn-login" class="btn-primary">Se connecter</button>
+
+                <p class="switch-link">
+                    Pas encore de compte ?
+                    <a href="#" id="go-register">Creer un compte</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== VUE : REGISTER ==================== -->
+    <div id="view-register" class="view hidden">
+        <div class="auth-page">
+            <div class="auth-card">
+                <h1>SmartBank</h1>
+                <p class="subtitle">Creer votre compte</p>
+
+                <div class="form-group">
+                    <label for="reg-name">Nom complet</label>
+                    <input type="text" id="reg-name" placeholder="Jean Dupont">
+                </div>
+
+                <div class="form-group">
+                    <label for="reg-email">Adresse email</label>
+                    <input type="email" id="reg-email" placeholder="exemple@email.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="reg-password">Mot de passe</label>
+                    <input type="password" id="reg-password" placeholder="Minimum 6 caracteres">
+                </div>
+
+                <div class="form-group">
+                    <label for="reg-confirm">Confirmer le mot de passe</label>
+                    <input type="password" id="reg-confirm" placeholder="Repetez le mot de passe">
+                </div>
+
+                <div id="register-error" class="alert-msg hidden"></div>
+
+                <button id="btn-register" class="btn-primary">Creer le compte</button>
+
+                <p class="switch-link">
+                    Deja un compte ?
+                    <a href="#" id="go-login">Se connecter</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== NAVBAR (visible apres connexion) ==================== -->
+    <nav id="main-navbar" class="navbar hidden">
+        <div class="navbar-brand">SmartBank</div>
+
+        <button id="hamburger-btn" class="navbar-hamburger">&#9776;</button>
+
+        <ul id="navbar-links" class="navbar-links">
+            <li><button id="nav-dashboard" class="nav-btn active">Tableau de bord</button></li>
+            <li><button id="nav-offres" class="nav-btn">Offres</button></li>
+            <li><button id="nav-simulation" class="nav-btn">Simulation</button></li>
+            <li><button id="nav-rewards" class="nav-btn">Recompenses</button></li>
+            <li><button id="nav-flash" class="nav-btn">Offres Flash</button></li>
+            <li><button id="nav-historique" class="nav-btn">Historique</button></li>
+            <li><button id="nav-profil" class="nav-btn">Profil</button></li>
+            <li><button id="btn-logout" class="nav-btn btn-logout">Deconnexion</button></li>
+        </ul>
+    </nav>
+
+    <!-- ==================== VUE : DASHBOARD ==================== -->
+    <div id="view-dashboard" class="view hidden">
+        <div class="container">
+
+            <!-- Banniere de bienvenue -->
+            <div class="hero">
+                <h2 id="dashboard-welcome">Bonjour, Utilisateur</h2>
+                <p>Gerez vos finances en toute simplicite depuis votre espace personnel.</p>
+                <button id="hero-btn-offres" class="hero-btn">Decouvrir les offres</button>
+            </div>
+
+            <!-- Statistiques principales -->
+            <h2 class="section-title">Votre situation financiere</h2>
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-solde">2 450,00 EUR</div>
+                    <div class="stat-label">Solde du compte</div>
+                </div>
+                <div class="stat-card accent">
+                    <div class="stat-value" id="stat-points">1 200</div>
+                    <div class="stat-label">Points de recompenses</div>
+                </div>
+                <div class="stat-card success">
+                    <div class="stat-value" id="stat-epargne">500,00 EUR</div>
+                    <div class="stat-label">Epargne du mois</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-depenses">350,00 EUR</div>
+                    <div class="stat-label">Depenses du mois</div>
+                </div>
+            </div>
+
+            <!-- Dernieres transactions -->
+            <h2 class="section-title">Dernieres transactions</h2>
+            <div class="history-list" id="dashboard-transactions">
+                <div class="history-item">
+                    <div class="history-item-left">
+                        <span class="history-item-title">Virement recu</span>
+                        <span class="history-item-date">08/09/2026</span>
+                    </div>
+                    <span class="history-item-amount green">+1 500,00 EUR</span>
+                </div>
+                <div class="history-item">
+                    <div class="history-item-left">
+                        <span class="history-item-title">Achat en ligne</span>
+                        <span class="history-item-date">07/09/2026</span>
+                    </div>
+                    <span class="history-item-amount red">-89,99 EUR</span>
+                </div>
+                <div class="history-item">
+                    <div class="history-item-left">
+                        <span class="history-item-title">Abonnement streaming</span>
+                        <span class="history-item-date">06/09/2026</span>
+                    </div>
+                    <span class="history-item-amount red">-14,99 EUR</span>
+                </div>
+            </div>
+
+            <!-- Offres en avant -->
+            <h2 class="section-title" style="margin-top: 32px;">Offres recommandees</h2>
+            <div class="cards-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Carte Visa Classic</span>
+                        <span class="card-badge">Populaire</span>
+                    </div>
+                    <div class="card-body">
+                        Sans frais annuels la premiere annee. Cashback 1% sur tous vos achats.
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn-primary btn-small">En savoir plus</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Livret Epargne +</span>
+                        <span class="card-badge green">Nouveau</span>
+                    </div>
+                    <div class="card-body">
+                        Taux d'interet de 3,5% par an. Depot minimum : 100 EUR.
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn-primary btn-small">Souscrire</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Credit Auto</span>
+                        <span class="card-badge red">Limite</span>
+                    </div>
+                    <div class="card-body">
+                        Financez votre vehicule a partir de 2,9% TEG. Reponse en 24h.
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn-primary btn-small">Simuler</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ==================== VUE : OFFRES ==================== -->
+    <div id="view-offres" class="view hidden">
+        <div class="container">
+
+            <h1 class="section-title">Nos offres financieres</h1>
+            <p style="color: var(--text-light); margin-bottom: 24px; font-size: 0.9rem;">
+                Decouvrez toutes nos offres adaptees a vos besoins.
+            </p>
+
+            <!-- Onglets categories -->
+            <div class="tabs">
+                <button class="tab-btn active" id="tab-cartes">Cartes bancaires</button>
+                <button class="tab-btn" id="tab-credits">Credits</button>
+                <button class="tab-btn" id="tab-epargne">Epargne</button>
+                <button class="tab-btn" id="tab-assurance">Assurances</button>
+            </div>
+
+            <!-- Contenu onglet Cartes -->
+            <div id="content-cartes">
+                <div class="cards-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Visa Classic</span>
+                            <span class="card-badge">Gratuit 1 an</span>
+                        </div>
+                        <div class="card-body">
+                            Carte de paiement internationale. Cashback 1% sur tous les achats. Plafond mensuel : 1 500 EUR.
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn-primary btn-small">Demander</button>
+                            <button class="btn-secondary btn-small">Details</button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Visa Gold</span>
+                            <span class="card-badge green">Premium</span>
+                        </div>
+                        <div class="card-body">
+                            Avantages voyages inclus. Cashback 2%. Assistance 24h/7j. Plafond mensuel : 5 000 EUR.
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn-primary btn-small">Demander</button>
+                            <button class="btn-secondary btn-small">Details</button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Mastercard Debit</span>
+                            <span class="card-badge">Instantane</span>
+                        </div>
+                        <div class="card-body">
+                            Carte debit simple et efficace. Paiements sans contact. Livraison en 48h. Frais annuels : 12 EUR.
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn-primary btn-small">Demander</button>
+                            <button class="btn-secondary btn-small">Details</button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Carte Virtuelle</span>
+                            <span class="card-badge green">Nouveau</span>
+                        </div>
+                        <div class="card-body">
+                            Pour vos achats en ligne uniquement. Numero genere instantanement. Entierement gratuit.
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn-primary btn-small">Activer</button>
+                            <button class="btn-secondary btn-small">Details</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contenu onglet Credits (masque par defaut) -->
+            <div id="content-credits" class="hidden">
+                <div class="cards-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Credit Consommation</span>
+                            <span class="card-badge">Taux 3,9%</span>
+                        </div>
+                        <div class="card-body">
+                            Jusqu'a 50 000 EUR. Duree de 12 a 84 mois. Reponse en 24 heures.
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn-primary btn-small">Simuler</button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Credit Immobilier</span>
+                            <span class="card-badge green">Taux 2,5%</span>
+                        </div>
+                        <div class="card-body">
+                            Financement jusqu'a 500 000 EUR. Duree de 5 a 25 ans. Assurance incluse.
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn-primary btn-small">Simuler</button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Credit Auto</span>
+                            <span class="card-badge red">Limite</span>
+                        </div>
+                        <div class="card-body">
+                            Jusqu'a 30 000 EUR. Taux a partir de 2,9%. Dossier simplifie en ligne.
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn-primary btn-small">Simuler</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contenu onglet Epargne (masque par defaut) -->
+            <div id="content-epargne" class="hidden">
+                <div class="cards-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Livret Epargne +</span>
+                            <span class="card-badge green">3,5% / an</span>
+                        </div>
+                        <div class="card-body">
+                            Depot minimum 100 EUR. Retrait a tout moment. Capital garanti.
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn-primary btn-small">Ouvrir</button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Plan Epargne Retraite</span>
+                            <span class="card-badge">Long terme</span>
+                        </div>
+                        <div class="card-body">
+                            Preparez votre retraite avec des versements libres. Avantages fiscaux inclus.
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn-primary btn-small">En savoir plus</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contenu onglet Assurance (masque par defaut) -->
+            <div id="content-assurance" class="hidden">
+                <div class="cards-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Assurance Habitation</span>
+                            <span class="card-badge">A partir de 8 EUR/mois</span>
+                        </div>
+                        <div class="card-body">
+                            Protection complete : incendie, vol, degats des eaux. Devis en 2 minutes.
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn-primary btn-small">Obtenir un devis</button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Assurance Vie</span>
+                            <span class="card-badge green">Recommande</span>
+                        </div>
+                        <div class="card-body">
+                            Protegez vos proches. Capital garanti, versement en cas de deces.
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn-primary btn-small">En savoir plus</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ==================== VUE : SIMULATION CREDIT ==================== -->
+    <div id="view-simulation" class="view hidden">
+        <div class="container">
+
+            <h1 class="section-title">Simulation de credit</h1>
+            <p style="color: var(--text-light); margin-bottom: 24px; font-size: 0.9rem;">
+                Remplissez le formulaire pour estimer vos mensualites. Aucune donnee n'est transmise.
+            </p>
+
+            <div class="sim-form">
+
+                <div class="form-group">
+                    <label for="sim-montant">Montant du credit (EUR)</label>
+                    <input type="number" id="sim-montant" placeholder="Ex : 10000" min="500" max="500000">
+                </div>
+
+                <div class="form-group">
+                    <label for="sim-duree">Duree de remboursement</label>
+                    <select id="sim-duree">
+                        <option value="">-- Choisir une duree --</option>
+                        <option value="12">12 mois (1 an)</option>
+                        <option value="24">24 mois (2 ans)</option>
+                        <option value="36">36 mois (3 ans)</option>
+                        <option value="48">48 mois (4 ans)</option>
+                        <option value="60">60 mois (5 ans)</option>
+                        <option value="84">84 mois (7 ans)</option>
+                        <option value="120">120 mois (10 ans)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="sim-taux">Type de credit</label>
+                    <select id="sim-taux">
+                        <option value="3.9">Credit consommation - 3,9%</option>
+                        <option value="2.9">Credit auto - 2,9%</option>
+                        <option value="2.5">Credit immobilier - 2,5%</option>
+                    </select>
+                </div>
+
+                <div id="sim-error" class="alert-msg hidden"></div>
+
+                <button id="btn-simuler" class="btn-primary">Calculer mes mensualites</button>
+
+                <!-- Resultat de la simulation -->
+                <div id="sim-result" class="sim-result hidden">
+                    <h4>Mensualite estimee</h4>
+                    <div class="amount" id="sim-mensualite">0,00 EUR</div>
+                    <p style="margin-top: 8px; font-size: 0.85rem; opacity: 0.85;">
+                        Cout total du credit : <strong id="sim-cout-total">0,00 EUR</strong>
+                    </p>
+                    <p style="font-size: 0.8rem; opacity: 0.75; margin-top: 4px;">
+                        Taux annuel : <span id="sim-taux-affiche">0%</span>
+                        &nbsp;|&nbsp;
+                        Duree : <span id="sim-duree-affiche">0 mois</span>
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ==================== VUE : RECOMPENSES (spinner) ==================== -->
+    <div id="view-rewards" class="view hidden">
+        <div class="container">
+
+            <h1 class="section-title">Recompenses</h1>
+            <p style="color: var(--text-light); margin-bottom: 8px; font-size: 0.9rem;">
+                Tournez la roue pour gagner des points bonus et des avantages exclusifs.
+            </p>
+            <p style="color: var(--text-light); margin-bottom: 24px; font-size: 0.85rem;">
+                Points actuels : <strong id="points-actuels">1 200 pts</strong>
+            </p>
+
+            <!-- Roue de la fortune -->
+            <div class="spinner-container">
+                <div style="position: relative;">
+                    <div class="spinner-pointer"></div>
+                    <div class="spinner-wheel" id="spinner-wheel"></div>
+                </div>
+
+                <!-- Legende des segments -->
+                <div class="spinner-legend">
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: var(--primary);"></span>
+                        <span>50 points</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: var(--secondary);"></span>
+                        <span>100 points</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: var(--accent);"></span>
+                        <span>Cashback 5 EUR</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: var(--success);"></span>
+                        <span>200 points</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: var(--danger);"></span>
+                        <span>Rejouer</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: #ec4899;"></span>
+                        <span>Cadeau surprise</span>
+                    </div>
+                </div>
+
+                <button id="btn-spin" class="btn-primary" style="margin-top: 24px; padding: 14px 40px; font-size: 1rem;">
+                    Tourner la roue
+                </button>
+
+                <!-- Message de resultat du spin -->
+                <div id="spin-result" class="spin-result hidden">
+                    <p id="spin-result-text"></p>
+                </div>
+            </div>
+
+            <!-- Historique des gains -->
+            <h2 class="section-title" style="margin-top: 32px;">Mes gains recents</h2>
+            <div class="history-list" id="rewards-history">
+                <div class="history-item">
+                    <div class="history-item-left">
+                        <span class="history-item-title">Roue de la fortune</span>
+                        <span class="history-item-date">08/09/2026</span>
+                    </div>
+                    <span class="history-item-amount green">+100 pts</span>
+                </div>
+                <div class="history-item">
+                    <div class="history-item-left">
+                        <span class="history-item-title">Bonus bienvenue</span>
+                        <span class="history-item-date">01/09/2026</span>
+                    </div>
+                    <span class="history-item-amount green">+500 pts</span>
+                </div>
+                <div class="history-item">
+                    <div class="history-item-left">
+                        <span class="history-item-title">Cashback achat</span>
+                        <span class="history-item-date">05/09/2026</span>
+                    </div>
+                    <span class="history-item-amount green">+50 pts</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ==================== VUE : OFFRES FLASH ==================== -->
+    <div id="view-flash" class="view hidden">
+        <div class="container">
+
+            <h1 class="section-title">Offres Flash</h1>
+            <p style="color: var(--text-light); margin-bottom: 24px; font-size: 0.9rem;">
+                Des offres a duree limitee, disponibles uniquement pour les membres SmartBank.
+            </p>
+
+            <!-- Bandeau timer -->
+            <div class="flash-banner">
+                <div>
+                    <h3>Vente Flash en cours !</h3>
+                    <p>Profitez de remises exclusives avant la fin du compte a rebours.</p>
+                </div>
+                <div class="flash-timer" id="flash-timer">01:59:43</div>
+            </div>
+
+            <!-- Produits flash -->
+            <div class="cards-grid">
+                <div class="offer-card">
+                    <div class="offer-card-image">CB</div>
+                    <div class="offer-card-content">
+                        <h4>Carte Visa Gold</h4>
+                        <p>Premiere annee offerte + 500 points de bienvenue</p>
+                        <div>
+                            <span class="price">0,00 EUR</span>
+                            <span class="price-old">49,00 EUR</span>
+                        </div>
+                        <div style="margin-top: 12px;">
+                            <span class="card-badge red">-100%</span>
+                        </div>
+                        <button class="btn-primary btn-small" style="margin-top: 12px; width: 100%;">
+                            Saisir l'offre
+                        </button>
+                    </div>
+                </div>
+
+                <div class="offer-card">
+                    <div class="offer-card-image" style="background: linear-gradient(135deg, var(--success), #059669);">EP</div>
+                    <div class="offer-card-content">
+                        <h4>Livret Epargne Premium</h4>
+                        <p>Taux booste a 5% pendant 3 mois pour tout nouveau depot</p>
+                        <div>
+                            <span class="price">5,00 % / an</span>
+                            <span class="price-old">3,5%</span>
+                        </div>
+                        <div style="margin-top: 12px;">
+                            <span class="card-badge red">Offre flash</span>
+                        </div>
+                        <button class="btn-primary btn-small" style="margin-top: 12px; width: 100%;">
+                            Saisir l'offre
+                        </button>
+                    </div>
+                </div>
+
+                <div class="offer-card">
+                    <div class="offer-card-image" style="background: linear-gradient(135deg, var(--accent), #d97706);">CR</div>
+                    <div class="offer-card-content">
+                        <h4>Credit Auto Express</h4>
+                        <p>Taux reduit a 1,9% TEG pour tout dossier soumis aujourd'hui</p>
+                        <div>
+                            <span class="price">1,90 % TEG</span>
+                            <span class="price-old">2,9%</span>
+                        </div>
+                        <div style="margin-top: 12px;">
+                            <span class="card-badge red">Stock limite</span>
+                        </div>
+                        <button class="btn-primary btn-small" style="margin-top: 12px; width: 100%;">
+                            Saisir l'offre
+                        </button>
+                    </div>
+                </div>
+
+                <div class="offer-card">
+                    <div class="offer-card-image" style="background: linear-gradient(135deg, var(--secondary), #6d28d9);">AS</div>
+                    <div class="offer-card-content">
+                        <h4>Assurance Multi-risques</h4>
+                        <p>6 premiers mois gratuits pour toute nouvelle souscription</p>
+                        <div>
+                            <span class="price">0,00 EUR</span>
+                            <span class="price-old">48,00 EUR</span>
+                        </div>
+                        <div style="margin-top: 12px;">
+                            <span class="card-badge red">-100%</span>
+                        </div>
+                        <button class="btn-primary btn-small" style="margin-top: 12px; width: 100%;">
+                            Saisir l'offre
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ==================== VUE : HISTORIQUE ==================== -->
+    <div id="view-historique" class="view hidden">
+        <div class="container">
+
+            <h1 class="section-title">Historique des transactions</h1>
+
+            <!-- Filtres -->
+            <div class="tabs" style="margin-bottom: 20px;">
+                <button class="tab-btn active" id="hist-tab-tout">Tout</button>
+                <button class="tab-btn" id="hist-tab-entree">Entrees</button>
+                <button class="tab-btn" id="hist-tab-sortie">Sorties</button>
+            </div>
+
+            <!-- Liste des transactions -->
+            <div class="history-list" id="historique-list">
+
+                <div class="history-item">
+                    <div class="history-item-left">
+                        <span class="history-item-title">Salaire mensuel</span>
+                        <span class="history-item-date">01/09/2026</span>
+                    </div>
+                    <span class="history-item-amount green">+2 500,00 EUR</span>
+                </div>
+
+                <div class="history-item">
+                    <div class="history-item-left">
+                        <span class="history-item-title">Loyer</span>
+                        <span class="history-item-date">03/09/2026</span>
+                    </div>
+                    <span class="history-item-amount red">-750,00 EUR</span>
+                </div>
+
+                <div class="history-item">
+                    <div class="history-item-left">
+                        <span class="history-item-title">Courses supermarche</span>
+                        <span class="history-item-date">04/09/2026</span>
+                    </div>
+                    <span class="history-item-amount red">-65,40 EUR</span>
+                </div>
+
+                <div class="history-item">
+                    <div class="history-item-left">
+                        <span class="history-item-title">Cashback carte Gold</span>
+                        <span class="history-item-date">05/09/2026</span>
+                    </div>
+                    <span class="history-item-amount green">+12,50 EUR</span>
+                </div>
+
+                <div class="history-item">
+                    <div class="history-item-left">
+                        <span class="history-item-title">Abonnement Netflix</span>
+                        <span class="history-item-date">06/09/2026</span>
+                    </div>
+                    <span class="history-item-amount red">-17,99 EUR</span>
+                </div>
+
+                <div class="history-item">
+                    <div class="history-item-left">
+                        <span class="history-item-title">Facture electricite</span>
+                        <span class="history-item-date">06/09/2026</span>
+                    </div>
+                    <span class="history-item-amount red">-82,00 EUR</span>
+                </div>
+
+                <div class="history-item">
+                    <div class="history-item-left">
+                        <span class="history-item-title">Achat en ligne</span>
+                        <span class="history-item-date">07/09/2026</span>
+                    </div>
+                    <span class="history-item-amount red">-89,99 EUR</span>
+                </div>
+
+                <div class="history-item">
+                    <div class="history-item-left">
+                        <span class="history-item-title">Virement recu</span>
+                        <span class="history-item-date">08/09/2026</span>
+                    </div>
+                    <span class="history-item-amount green">+1 500,00 EUR</span>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ==================== VUE : PROFIL ==================== -->
+    <div id="view-profil" class="view hidden">
+        <div class="container">
+
+            <!-- En-tete profil -->
+            <div class="profile-header">
+                <div class="profile-avatar" id="profile-avatar">JD</div>
+                <h2 id="profile-name">Jean Dupont</h2>
+                <p id="profile-email">jean.dupont@email.com</p>
+            </div>
+
+            <!-- Informations personnelles -->
+            <div class="profile-section">
+                <h3>Informations personnelles</h3>
+                <div class="profile-row">
+                    <span class="label">Nom complet</span>
+                    <span class="value" id="info-name">Jean Dupont</span>
+                </div>
+                <div class="profile-row">
+                    <span class="label">Email</span>
+                    <span class="value" id="info-email">jean.dupont@email.com</span>
+                </div>
+                <div class="profile-row">
+                    <span class="label">Membre depuis</span>
+                    <span class="value" id="info-date">Septembre 2026</span>
+                </div>
+                <div class="profile-row">
+                    <span class="label">Points de recompenses</span>
+                    <span class="value" id="info-points">1 200 pts</span>
+                </div>
+            </div>
+
+            <!-- Modifier le profil -->
+            <div class="profile-section">
+                <h3>Modifier mes informations</h3>
+                <div class="form-group">
+                    <label for="edit-name">Nouveau nom</label>
+                    <input type="text" id="edit-name" placeholder="Votre nom complet">
+                </div>
+                <div class="form-group">
+                    <label for="edit-email">Nouvel email</label>
+                    <input type="email" id="edit-email" placeholder="Votre adresse email">
+                </div>
+                <button id="btn-save-profile" class="btn-primary">Enregistrer les modifications</button>
+            </div>
+
+            <!-- Securite -->
+            <div class="profile-section">
+                <h3>Securite</h3>
+                <div class="form-group">
+                    <label for="edit-password-old">Ancien mot de passe</label>
+                    <input type="password" id="edit-password-old" placeholder="Votre mot de passe actuel">
+                </div>
+                <div class="form-group">
+                    <label for="edit-password-new">Nouveau mot de passe</label>
+                    <input type="password" id="edit-password-new" placeholder="Minimum 6 caracteres">
+                </div>
+                <button id="btn-change-password" class="btn-secondary">Changer le mot de passe</button>
+            </div>
+
+            <!-- Danger zone -->
+            <div class="profile-section">
+                <h3>Zone dangereuse</h3>
+                <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 12px;">
+                    La suppression de votre compte est irreversible. Toutes vos donnees seront effacees.
+                </p>
+                <button id="btn-delete-account" class="btn-danger">Supprimer mon compte</button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ==================== MODAL CONFIRMATION ==================== -->
+    <div id="modal-confirm" class="modal-overlay hidden">
+        <div class="modal">
+            <button class="modal-close" id="modal-close-btn">&#10005;</button>
+            <h3 id="modal-title">Confirmer la suppression</h3>
+            <p id="modal-message">Etes-vous sur de vouloir supprimer votre compte ? Cette action est irreversible.</p>
+            <div class="modal-actions">
+                <button id="modal-cancel" class="btn-secondary">Annuler</button>
+                <button id="modal-confirm-btn" class="btn-danger">Confirmer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer id="main-footer" class="footer hidden">
+        <p>SmartBank &copy; 2026 - Application fictive a des fins educatives uniquement.</p>
+        <p style="margin-top: 4px;">
+            Aucune operation bancaire reelle n'est effectuee.
+        </p>
+    </footer>
+
+</div><!-- fin #root -->
+
+<script type="module" src="index.js"></script>
+
+</body>
+</html>
