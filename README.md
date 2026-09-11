@@ -44,3 +44,19 @@ smartbank/
 - JavaScript ES6+ (modules, async/await, Web Crypto API)
 - localStorage pour la persistance des données
 - Aucune dépendance externe ni framework
+
+## Lancement
+
+Le projet utilise des modules ES6, il nécessite un serveur HTTP local (pas d'ouverture directe du fichier).
+
+```bash
+# Avec VS Code Live Server : clic droit sur index.html > Open with Live Server
+# Avec Python :
+python -m http.server 8080
+# Avec Node.js (npx) :
+npx serve .
+```
+
+Ouvrir ensuite `http://localhost:8080` dans le navigateur.
+
+> Projet fictif à des fins éducatives. Aucune opération bancaire réelle n'est effectuée.
