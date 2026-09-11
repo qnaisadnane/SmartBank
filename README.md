@@ -37,3 +37,10 @@ smartbank/
 └── styles/
     └── style.css           # Styles globaux (mobile-first)
 ```
+
+## Technologies
+
+- HTML5 / CSS3 (variables CSS, grid, flexbox, responsive mobile-first)
+- JavaScript ES6+ (modules, async/await, Web Crypto API)
+- localStorage pour la persistance des données
+- Aucune dépendance externe ni framework
