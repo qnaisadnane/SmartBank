@@ -252,24 +252,35 @@ input {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 40px 20px;
+    padding: 32px 20px;
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 32px;
+}
+
+.spinner-wheel-wrapper {
+    position: relative;
+    padding: 10px;
 }
 
 .spinner-wheel {
-    width: 240px;
-    height: 240px;
+    width: 260px;
+    height: 260px;
     border-radius: 50%;
-    border: 6px solid var(--primary);
+    border: 8px solid #ffffff;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15), inset 0 0 0 2px rgba(0, 0, 0, 0.05);
     background: conic-gradient(
-        var(--primary) 0deg 60deg,
-        var(--secondary) 60deg 120deg,
-        var(--accent) 120deg 180deg,
-        var(--success) 180deg 240deg,
-        var(--danger) 240deg 300deg,
+        #2563eb 0deg 60deg,
+        #8b5cf6 60deg 120deg,
+        #10b981 120deg 180deg,
+        #f59e0b 180deg 240deg,
+        #06b6d4 240deg 300deg,
         #ec4899 300deg 360deg
     );
     position: relative;
     margin-bottom: 20px;
+    transition: transform 3s cubic-bezier(0.2, 0.8, 0.3, 1);
 }
 
 .spinner-wheel::after {
@@ -280,23 +291,26 @@ input {
     transform: translate(-50%, -50%);
     width: 60px;
     height: 60px;
-    background: var(--card);
+    background: #ffffff;
     border-radius: 50%;
-    box-shadow: var(--shadow);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+    border: 4px solid #f1f5f9;
 }
 
 .spinner-pointer {
     width: 0;
     height: 0;
-    border-left: 12px solid transparent;
-    border-right: 12px solid transparent;
-    border-bottom: 24px solid var(--danger);
+    border-left: 14px solid transparent;
+    border-right: 14px solid transparent;
+    border-top: 26px solid #0f172a;
     position: absolute;
-    top: -14px;
+    top: 0px;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 2;
+    z-index: 10;
+    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.3));
 }
+
 
 /* ===== SIMULATION CREDIT ===== */
 .sim-form {
@@ -958,36 +972,187 @@ input {
 .spinner-legend {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 8px 24px;
-    margin-top: 20px;
-    text-align: left;
+    gap: 12px 20px;
+    margin-top: 24px;
+    width: 100%;
+    max-width: 520px;
 }
 
 .legend-item {
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 0.85rem;
+    gap: 10px;
+    padding: 10px 14px;
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 0.88rem;
+    font-weight: 500;
     color: var(--text);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.legend-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
 }
 
 .legend-color {
-    width: 16px;
-    height: 16px;
-    border-radius: 4px;
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
     flex-shrink: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
 }
 
-/* ===== RESULTAT DU SPIN ===== */
+/* ===== RESULTAT DU SPIN (ADAPTE AUX LOTS) ===== */
 .spin-result {
-    background: var(--card);
-    border: 2px solid var(--primary);
     border-radius: var(--radius);
-    padding: 16px 24px;
-    margin-top: 16px;
+    padding: 18px 24px;
+    margin-top: 20px;
     text-align: center;
     font-weight: 600;
     font-size: 1rem;
+    box-shadow: var(--shadow-lg);
+    background: #ffffff;
+    border: 2px solid var(--primary);
     color: var(--primary);
+    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    max-width: 500px;
+    width: 100%;
+}
+
+@keyframes popIn {
+    0% { transform: scale(0.9); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.spin-result.gold {
+    border-color: #f59e0b;
+    background: linear-gradient(135deg, #fffbeb, #fef3c7);
+    color: #b45309;
+}
+
+.spin-result.cashback {
+    border-color: #10b981;
+    background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+    color: #047857;
+}
+
+.spin-result.purple {
+    border-color: #8b5cf6;
+    background: linear-gradient(135deg, #f5f3ff, #ede9fe);
+    color: #6d28d9;
+}
+
+.spin-result.blue {
+    border-color: #2563eb;
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    color: #1d4ed8;
+}
+
+.spin-result.replay {
+    border-color: #06b6d4;
+    background: linear-gradient(135deg, #ecfeff, #cffafe);
+    color: #0e7490;
+}
+
+.spin-result.surprise {
+    border-color: #ec4899;
+    background: linear-gradient(135deg, #fdf2f8, #fce7f3);
+    color: #be185d;
+}
+
+/* ===== COULEURS HISTORIQUE RECOMPENSES ===== */
+.history-item-amount.gold { color: #d97706; }
+.history-item-amount.cashback { color: #059669; }
+.history-item-amount.purple { color: #7c3aed; }
+.history-item-amount.blue { color: #2563eb; }
+.history-item-amount.replay { color: #0891b2; }
+.history-item-amount.surprise { color: #db2777; }
+
+/* ===== CATALOGUE DES AVANTAGES DEBLOQUABLES ===== */
+.rewards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+    margin-top: 16px;
+    margin-bottom: 36px;
+}
+
+.reward-benefit-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 22px;
     box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    border-top: 5px solid var(--primary);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.reward-benefit-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.benefit-badge {
+    display: inline-block;
+    align-self: flex-start;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.benefit-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 8px;
+}
+
+.benefit-desc {
+    font-size: 0.88rem;
+    color: var(--text-light);
+    line-height: 1.5;
+    margin-bottom: 20px;
+    flex-grow: 1;
+}
+
+.benefit-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+}
+
+.benefit-cost {
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+.btn-benefit {
+    background: var(--primary);
+    color: white;
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: background 0.2s, transform 0.1s;
+}
+
+.btn-benefit:hover {
+    background: var(--primary-dark);
+}
+
+.btn-benefit:disabled {
+    background: #cbd5e1;
+    color: #64748b;
+    cursor: not-allowed;
 }
