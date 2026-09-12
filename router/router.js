@@ -2,6 +2,7 @@ import { chargerDashboard } from "../components/dashboard.js";
 import { chargerProfil } from "../components/profil.js";
 import { chargerHistorique } from "../components/historique.js";
 import { chargerRewards } from "../components/rewards.js";
+import { estConnecte } from "../storage/storage.js";
 
 let toutesLesVues = [
     "view-login",
@@ -16,6 +17,12 @@ let toutesLesVues = [
 ];
 
 function afficherVue(idVue, updateHistory = true) {
+    // Protection des routes privees : redirection vers login si non connecte
+    if (!estConnecte() && idVue !== "view-login" && idVue !== "view-register") {
+        idVue = "view-login";
+        masquerNavbar();
+    }
+
     for (let i = 0; i < toutesLesVues.length; i++) {
         let element = document.getElementById(toutesLesVues[i]);
         if (element !== null) {
@@ -37,15 +44,17 @@ function afficherVue(idVue, updateHistory = true) {
         window.history.pushState({ vue: idVue }, "", nouvelleUrl);
     }
 
-    // Charger les donnees dynamiques selon la vue
-    if (idVue === "view-dashboard") {
-        chargerDashboard();
-    } else if (idVue === "view-profil") {
-        chargerProfil();
-    } else if (idVue === "view-historique") {
-        chargerHistorique("tout");
-    } else if (idVue === "view-rewards") {
-        chargerRewards();
+    // Charger les donnees dynamiques selon la vue (uniquement si connecte)
+    if (estConnecte()) {
+        if (idVue === "view-dashboard") {
+            chargerDashboard();
+        } else if (idVue === "view-profil") {
+            chargerProfil();
+        } else if (idVue === "view-historique") {
+            chargerHistorique("tout");
+        } else if (idVue === "view-rewards") {
+            chargerRewards();
+        }
     }
 
     // Fermer le menu mobile si ouvert
@@ -132,7 +141,12 @@ function initialiserNavigation() {
     }
 
     window.addEventListener("popstate", () => {
-        let chemin = window.location.pathname.replace(/^\/+/, "");
+        let chemin = window.location.pathname.replace(/^\/+/, "").toLowerCase();
+        if (!estConnecte()) {
+            afficherVue(chemin === "register" ? "view-register" : "view-login", false);
+            return;
+        }
+
         let vue = "view-" + chemin;
         if (toutesLesVues.includes(vue)) {
             afficherVue(vue, false);
@@ -143,4 +157,3 @@ function initialiserNavigation() {
 }
 
 export { afficherVue, afficherNavbar, masquerNavbar, mettreajourNavbar, initialiserNavigation };
-
