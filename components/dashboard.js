@@ -1,14 +1,13 @@
 import { recupererUtilisateur , recupererTransactions } from "../storage/storage.js";
 import { afficherVue } from "../router/router.js";
 
-
 function chargerDashboard(){
     let utilisateur = recupererUtilisateur();
 
     if(utilisateur === null){
         return;
     }
-    document.getElementById("dashboard-welcome").textContent="Bonjour, "+utilisateur.nom;
+    document.getElementById("dashboard-welcome").textContent = "Bonjour, " + utilisateur.nom;
 
     document.getElementById("stat-points").textContent = utilisateur.points !== undefined ? utilisateur.points : (utilisateur.point || 0);
 
@@ -27,7 +26,7 @@ function chargerDashboard(){
     if(transactions.length < 3 ){
         limite = transactions.length;
     }
-    for(let i = 0 ; i<limite ; i++){
+    for(let i = 0 ; i < limite ; i++){
         let t = transactions[i];
 
         let couleur = "green";
@@ -47,11 +46,12 @@ function chargerDashboard(){
         conteneur.appendChild(item);
     }
     // Bouton hero vers la page offres
-    document.getElementById("hero-btn-offres").addEventListener("click", function() {
-        afficherVue("view-offres");
-    });
+    let btnOffres = document.getElementById("hero-btn-offres");
+    if (btnOffres) {
+        btnOffres.onclick = function() {
+            afficherVue("view-offres");
+        };
+    }
 }
+
 export { chargerDashboard };
-
-    
-
