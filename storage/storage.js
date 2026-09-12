@@ -1,6 +1,7 @@
 let CLE_UTILISATEUR = "smartbank_user";
 let CLE_TRANSACTIONS = "smartbank_transactions";
 let CLE_GAINS_SPINNER = "smartbank_gains_spinner";
+let CLE_SESSION = "smartbank_session";
 
 function sauvegarderUtilisateur(utilisateur){
     localStorage.setItem(CLE_UTILISATEUR , JSON.stringify(utilisateur));
@@ -9,7 +10,7 @@ function sauvegarderUtilisateur(utilisateur){
 function recupererUtilisateur(){
     let data = localStorage.getItem(CLE_UTILISATEUR);
     if(data === null){
-        return null 
+        return null;
     }
     return JSON.parse(data);
 }
@@ -23,7 +24,7 @@ function recupererTransactions(){
     if(data === null){
         return [];
     }
-        return JSON.parse(data);
+    return JSON.parse(data);
 }
 
 function sauvegarderTransaction(list){
@@ -50,10 +51,23 @@ function ajouterGainSpinner(gain) {
     localStorage.setItem(CLE_GAINS_SPINNER, JSON.stringify(liste));
 }
 
+function estConnecte() {
+    return sessionStorage.getItem(CLE_SESSION) === "true";
+}
+
+function definirSessionConnectee(connecte) {
+    if (connecte) {
+        sessionStorage.setItem(CLE_SESSION, "true");
+    } else {
+        sessionStorage.removeItem(CLE_SESSION);
+    }
+}
+
 function toutEffacer() {
     localStorage.removeItem(CLE_UTILISATEUR);
     localStorage.removeItem(CLE_TRANSACTIONS);
     localStorage.removeItem(CLE_GAINS_SPINNER);
+    sessionStorage.removeItem(CLE_SESSION);
 }
 
 function creerTransactionDefault(){
@@ -63,7 +77,7 @@ function creerTransactionDefault(){
     sauvegarderTransaction(defaut);
 }
 
-export{
+export {
     sauvegarderUtilisateur,
     recupererUtilisateur,
     supprimerUtilisateur,
@@ -72,7 +86,8 @@ export{
     ajouterTransactions,
     recupererGainsSpinner,
     ajouterGainSpinner,
+    estConnecte,
+    definirSessionConnectee,
     toutEffacer,
     creerTransactionDefault
 };
-
