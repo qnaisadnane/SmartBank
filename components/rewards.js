@@ -3,18 +3,40 @@ import { recupererUtilisateur, sauvegarderUtilisateur, ajouterGainSpinner, recup
 let rotationActuelle = 0;
 let enTrainDeTourner = false;
 
-// 1. Mettre a jour les points et l'historique des gains
+// Configuration des 6 lots avec couleurs adaptees a la valeur de chaque avantage (sans emojis)
+const lots = [
+    { titre: "50 points", points: 50, couleur: "#2563eb", classe: "blue" },
+    { titre: "100 points", points: 100, couleur: "#8b5cf6", classe: "purple" },
+    { titre: "Cashback 5 EUR", points: 50, couleur: "#10b981", classe: "cashback" },
+    { titre: "200 points (Jackpot)", points: 200, couleur: "#f59e0b", classe: "gold" },
+    { titre: "Rejouer", points: 0, couleur: "#06b6d4", classe: "replay" },
+    { titre: "Cadeau surprise", points: 150, couleur: "#ec4899", classe: "surprise" }
+];
+
+// 1. Mettre a jour les points, l'historique des gains et l'etat des boutons d'avantages
 function chargerRewards() {
     let utilisateur = recupererUtilisateur();
+    let pts = 500;
     if (utilisateur !== null) {
-        let pts = utilisateur.points !== undefined ? utilisateur.points : 500;
+        pts = utilisateur.points !== undefined ? utilisateur.points : 500;
         let pointsElem = document.getElementById("points-actuels");
         if (pointsElem) {
             pointsElem.textContent = pts + " pts";
         }
     }
 
-    // Charger l'historique des gains
+    // Mettre a jour les boutons d'avantages selon le solde
+    let btnsAvantages = document.querySelectorAll(".btn-benefit");
+    btnsAvantages.forEach(btn => {
+        let cout = parseInt(btn.getAttribute("data-cost"), 10);
+        if (pts < cout) {
+            btn.title = "Il vous manque " + (cout - pts) + " pts";
+        } else {
+            btn.title = "Cliquez pour échanger cet avantage";
+        }
+    });
+
+    // Charger l'historique des gains avec les couleurs adaptees
     let conteneur = document.getElementById("rewards-history");
     if (!conteneur) return;
 
@@ -25,18 +47,31 @@ function chargerRewards() {
             let g = gains[i];
             let item = document.createElement("div");
             item.className = "history-item";
+
+            // Determination de la classe de couleur
+            let classeCouleur = g.classe || "gold";
+            if (!g.classe) {
+                if (g.titre.includes("50")) classeCouleur = "blue";
+                else if (g.titre.includes("100")) classeCouleur = "purple";
+                else if (g.titre.includes("Cashback")) classeCouleur = "cashback";
+                else if (g.titre.includes("200")) classeCouleur = "gold";
+                else if (g.titre.includes("Rejouer")) classeCouleur = "replay";
+                else if (g.titre.includes("Surprise")) classeCouleur = "surprise";
+            }
+
+            let signe = g.points > 0 ? "+" : "";
             item.innerHTML =
                 '<div class="history-item-left">' +
                     '<span class="history-item-title">' + g.titre + '</span>' +
                     '<span class="history-item-date">' + g.date + '</span>' +
                 '</div>' +
-                '<span class="history-item-amount green">+' + g.points + ' pts</span>';
+                '<span class="history-item-amount ' + classeCouleur + '">' + signe + g.points + ' pts</span>';
             conteneur.appendChild(item);
         }
     }
 }
 
-// 2. Faire tourner la roue
+// 2. Faire tourner la roue avec ciblage precis du segment et couleur adaptee
 function tournerRoue() {
     if (enTrainDeTourner) return;
 
@@ -49,39 +84,42 @@ function tournerRoue() {
 
     enTrainDeTourner = true;
     btnSpin.disabled = true;
-    spinResult.classList.add("hidden");
-
-    // Les 6 recompenses possibles
-    let lots = [
-        { titre: "50 points", points: 50 },
-        { titre: "100 points", points: 100 },
-        { titre: "Cashback 5 EUR", points: 50 },
-        { titre: "200 points", points: 200 },
-        { titre: "Rejouer", points: 0 },
-        { titre: "Cadeau surprise", points: 150 }
-    ];
+    spinResult.className = "spin-result hidden";
 
     // Choisir un lot au hasard
     let indexGagnant = Math.floor(Math.random() * lots.length);
     let lotGagne = lots[indexGagnant];
 
-    // Ajouter au moins 5 tours complets (1800 deg) plus l'angle du segment
-    let degresSupplementaires = 1800 + (indexGagnant * 60) + Math.floor(Math.random() * 30);
-    rotationActuelle += degresSupplementaires;
+    // Calcul precis de l'angle :
+    // Segment 0 (50 pts) : [0, 60], centre 30 deg -> angle roue = 330 deg
+    // Segment k : centre (30 + k*60) deg -> angle roue = (330 - k*60) mod 360
+    let angleCible = (330 - (indexGagnant * 60) + 360) % 360;
+    let variation = Math.floor((Math.random() - 0.5) * 24);
+    let angleVise = (angleCible + variation + 360) % 360;
+
+    let toursComplets = 5 * 360; // 1800 deg
+    let angleActuelMod = ((rotationActuelle % 360) + 360) % 360;
+    let delta = (angleVise - angleActuelMod + 360) % 360;
+    if (delta < 180) {
+        delta += 360;
+    }
+    rotationActuelle += toursComplets + delta;
 
     wheel.style.transition = "transform 3s cubic-bezier(0.2, 0.8, 0.3, 1)";
     wheel.style.transform = "rotate(" + rotationActuelle + "deg)";
 
-    // Attendre la fin de l'animation (3 secondes)
+    // Attendre la fin de l'animation
     setTimeout(function() {
         enTrainDeTourner = false;
         btnSpin.disabled = false;
 
-        // Afficher le resultat
+        // Afficher le resultat avec la couleur adaptee
+        spinResult.className = "spin-result " + lotGagne.classe;
+
         if (lotGagne.points > 0) {
-            spinResultText.textContent = "Félicitations ! Vous avez gagné : " + lotGagne.titre + " (+" + lotGagne.points + " pts) !";
+            spinResultText.innerHTML = "<strong>Félicitations !</strong> Vous avez remporté : <strong>" + lotGagne.titre + "</strong> (+" + lotGagne.points + " pts) !";
         } else {
-            spinResultText.textContent = "Vous avez obtenu : Rejouer ! Tentez encore votre chance.";
+            spinResultText.innerHTML = "<strong>Seconde chance !</strong> Vous pouvez rejouer immédiatement votre tour !";
         }
         spinResult.classList.remove("hidden");
 
@@ -98,7 +136,8 @@ function tournerRoue() {
             let gain = {
                 titre: lotGagne.titre,
                 points: lotGagne.points,
-                date: new Date().toLocaleDateString("fr-FR")
+                date: new Date().toLocaleDateString("fr-FR"),
+                classe: lotGagne.classe
             };
             ajouterGainSpinner(gain);
 
@@ -108,11 +147,50 @@ function tournerRoue() {
     }, 3000);
 }
 
+// 3. Gestion de l'echange de points contre les avantages
+function initialiserEchangesAvantages() {
+    let btnsAvantages = document.querySelectorAll(".btn-benefit");
+    btnsAvantages.forEach(btn => {
+        btn.addEventListener("click", function() {
+            let cout = parseInt(this.getAttribute("data-cost"), 10);
+            let nomAvantage = this.getAttribute("data-reward");
+            let utilisateur = recupererUtilisateur();
+
+            if (!utilisateur) return;
+            let solde = utilisateur.points !== undefined ? utilisateur.points : 500;
+
+            if (solde < cout) {
+                alert("Solde insuffisant ! Il vous faut " + cout + " points pour cet avantage (solde actuel : " + solde + " pts).");
+                return;
+            }
+
+            let confirmer = confirm("Confirmez-vous l'échange de " + cout + " points contre l'avantage : \"" + nomAvantage + "\" ?");
+            if (confirmer) {
+                utilisateur.points = solde - cout;
+                sauvegarderUtilisateur(utilisateur);
+
+                // Ajouter dans l'historique
+                let gain = {
+                    titre: "Échange : " + nomAvantage,
+                    points: -cout,
+                    date: new Date().toLocaleDateString("fr-FR"),
+                    classe: "purple"
+                };
+                ajouterGainSpinner(gain);
+
+                alert("Bravo ! L'avantage \"" + nomAvantage + "\" a été activé sur votre compte.");
+                chargerRewards();
+            }
+        });
+    });
+}
+
 function initialiserRewards() {
     let btnSpin = document.getElementById("btn-spin");
     if (btnSpin) {
-        btnSpin.addEventListener("click", tournerRoue);
+        btnSpin.onclick = tournerRoue;
     }
+    initialiserEchangesAvantages();
     chargerRewards();
 }
 
