@@ -17,7 +17,6 @@ let toutesLesVues = [
 ];
 
 function afficherVue(idVue, updateHistory = true) {
-    // Protection des routes privees : redirection vers login si non connecte
     if (!estConnecte() && idVue !== "view-login" && idVue !== "view-register") {
         idVue = "view-login";
         masquerNavbar();
@@ -44,7 +43,6 @@ function afficherVue(idVue, updateHistory = true) {
         window.history.pushState({ vue: idVue }, "", nouvelleUrl);
     }
 
-    // Charger les donnees dynamiques selon la vue (uniquement si connecte)
     if (estConnecte()) {
         if (idVue === "view-dashboard") {
             chargerDashboard();
@@ -57,7 +55,6 @@ function afficherVue(idVue, updateHistory = true) {
         }
     }
 
-    // Fermer le menu mobile si ouvert
     let menuLinks = document.getElementById("navbar-links");
     if (menuLinks) {
         menuLinks.classList.remove("open");
@@ -131,7 +128,6 @@ function initialiserNavigation() {
         }
     });
 
-    // Menu hamburger responsive
     let btnHamburger = document.getElementById("hamburger-btn");
     let menuLinks = document.getElementById("navbar-links");
     if (btnHamburger && menuLinks) {

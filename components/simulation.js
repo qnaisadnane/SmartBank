@@ -25,6 +25,7 @@ function calculerMensualiste(){
         erreur.classList.remove("hidden");
         return;
         }
+        
 
         let tauxMensuel = (taux / 100) / 12;
         let mensualite;

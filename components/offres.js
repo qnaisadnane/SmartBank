@@ -1,8 +1,8 @@
 function initialiserOffres() {
-    var tabCartes = document.getElementById("tab-cartes");
-    var tabCredits = document.getElementById("tab-credits");
-    var tabEpargne = document.getElementById("tab-epargne");
-    var tabAssurance = document.getElementById("tab-assurance");
+    let tabCartes = document.getElementById("tab-cartes");
+    let tabCredits = document.getElementById("tab-credits");
+    let tabEpargne = document.getElementById("tab-epargne");
+    let tabAssurance = document.getElementById("tab-assurance");
 
     tabCartes.addEventListener("click", function() {
         afficherOnglet("content-cartes");
@@ -26,9 +26,9 @@ function initialiserOffres() {
 }
 
 function afficherOnglet(idContenu) {
-    var tousLesContenus = ["content-cartes", "content-credits", "content-epargne", "content-assurance"];
+    let tousLesContenus = ["content-cartes", "content-credits", "content-epargne", "content-assurance"];
 
-    for (var i = 0; i < tousLesContenus.length; i++) {
+    for (let i = 0; i < tousLesContenus.length; i++) {
         document.getElementById(tousLesContenus[i]).classList.add("hidden");
     }
 
@@ -36,8 +36,8 @@ function afficherOnglet(idContenu) {
 }
 
 function activerTab(tabActif) {
-    var tousLesTabs = document.querySelectorAll("#view-offres .tab-btn");
-    for (var i = 0; i < tousLesTabs.length; i++) {
+    let tousLesTabs = document.querySelectorAll("#view-offres .tab-btn");
+    for (let i = 0; i < tousLesTabs.length; i++) {
         tousLesTabs[i].classList.remove("active");
     }
     tabActif.classList.add("active");

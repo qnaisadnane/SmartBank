@@ -3,7 +3,6 @@ import { recupererUtilisateur, sauvegarderUtilisateur, ajouterGainSpinner, recup
 let rotationActuelle = 0;
 let enTrainDeTourner = false;
 
-// Configuration des 6 lots avec couleurs adaptees a la valeur de chaque avantage (sans emojis)
 const lots = [
     { titre: "50 points", points: 50, couleur: "#2563eb", classe: "blue" },
     { titre: "100 points", points: 100, couleur: "#8b5cf6", classe: "purple" },
@@ -13,7 +12,6 @@ const lots = [
     { titre: "Cadeau surprise", points: 150, couleur: "#ec4899", classe: "surprise" }
 ];
 
-// 1. Mettre a jour les points, l'historique des gains et l'etat des boutons d'avantages
 function chargerRewards() {
     let utilisateur = recupererUtilisateur();
     let pts = 500;
@@ -25,18 +23,8 @@ function chargerRewards() {
         }
     }
 
-    // Mettre a jour les boutons d'avantages selon le solde
-    let btnsAvantages = document.querySelectorAll(".btn-benefit");
-    btnsAvantages.forEach(btn => {
-        let cout = parseInt(btn.getAttribute("data-cost"), 10);
-        if (pts < cout) {
-            btn.title = "Il vous manque " + (cout - pts) + " pts";
-        } else {
-            btn.title = "Cliquez pour échanger cet avantage";
-        }
-    });
 
-    // Charger l'historique des gains avec les couleurs adaptees
+
     let conteneur = document.getElementById("rewards-history");
     if (!conteneur) return;
 
@@ -48,7 +36,6 @@ function chargerRewards() {
             let item = document.createElement("div");
             item.className = "history-item";
 
-            // Determination de la classe de couleur
             let classeCouleur = g.classe || "gold";
             if (!g.classe) {
                 if (g.titre.includes("50")) classeCouleur = "blue";
@@ -71,7 +58,6 @@ function chargerRewards() {
     }
 }
 
-// 2. Faire tourner la roue avec ciblage precis du segment et couleur adaptee
 function tournerRoue() {
     if (enTrainDeTourner) return;
 
@@ -86,13 +72,9 @@ function tournerRoue() {
     btnSpin.disabled = true;
     spinResult.className = "spin-result hidden";
 
-    // Choisir un lot au hasard
     let indexGagnant = Math.floor(Math.random() * lots.length);
     let lotGagne = lots[indexGagnant];
 
-    // Calcul precis de l'angle :
-    // Segment 0 (50 pts) : [0, 60], centre 30 deg -> angle roue = 330 deg
-    // Segment k : centre (30 + k*60) deg -> angle roue = (330 - k*60) mod 360
     let angleCible = (330 - (indexGagnant * 60) + 360) % 360;
     let variation = Math.floor((Math.random() - 0.5) * 24);
     let angleVise = (angleCible + variation + 360) % 360;
@@ -108,12 +90,10 @@ function tournerRoue() {
     wheel.style.transition = "transform 3s cubic-bezier(0.2, 0.8, 0.3, 1)";
     wheel.style.transform = "rotate(" + rotationActuelle + "deg)";
 
-    // Attendre la fin de l'animation
     setTimeout(function() {
         enTrainDeTourner = false;
         btnSpin.disabled = false;
 
-        // Afficher le resultat avec la couleur adaptee
         spinResult.className = "spin-result " + lotGagne.classe;
 
         if (lotGagne.points > 0) {
@@ -123,7 +103,7 @@ function tournerRoue() {
         }
         spinResult.classList.remove("hidden");
 
-        // Mettre a jour les points de l'utilisateur
+        
         let utilisateur = recupererUtilisateur();
         if (utilisateur !== null) {
             if (utilisateur.points === undefined) {
@@ -132,7 +112,7 @@ function tournerRoue() {
             utilisateur.points += lotGagne.points;
             sauvegarderUtilisateur(utilisateur);
 
-            // Enregistrer dans l'historique des gains
+        
             let gain = {
                 titre: lotGagne.titre,
                 points: lotGagne.points,
@@ -141,56 +121,18 @@ function tournerRoue() {
             };
             ajouterGainSpinner(gain);
 
-            // Recharger l'affichage des points et de l'historique
+        
             chargerRewards();
         }
     }, 3000);
 }
 
-// 3. Gestion de l'echange de points contre les avantages
-function initialiserEchangesAvantages() {
-    let btnsAvantages = document.querySelectorAll(".btn-benefit");
-    btnsAvantages.forEach(btn => {
-        btn.addEventListener("click", function() {
-            let cout = parseInt(this.getAttribute("data-cost"), 10);
-            let nomAvantage = this.getAttribute("data-reward");
-            let utilisateur = recupererUtilisateur();
-
-            if (!utilisateur) return;
-            let solde = utilisateur.points !== undefined ? utilisateur.points : 500;
-
-            if (solde < cout) {
-                alert("Solde insuffisant ! Il vous faut " + cout + " points pour cet avantage (solde actuel : " + solde + " pts).");
-                return;
-            }
-
-            let confirmer = confirm("Confirmez-vous l'échange de " + cout + " points contre l'avantage : \"" + nomAvantage + "\" ?");
-            if (confirmer) {
-                utilisateur.points = solde - cout;
-                sauvegarderUtilisateur(utilisateur);
-
-                // Ajouter dans l'historique
-                let gain = {
-                    titre: "Échange : " + nomAvantage,
-                    points: -cout,
-                    date: new Date().toLocaleDateString("fr-FR"),
-                    classe: "purple"
-                };
-                ajouterGainSpinner(gain);
-
-                alert("Bravo ! L'avantage \"" + nomAvantage + "\" a été activé sur votre compte.");
-                chargerRewards();
-            }
-        });
-    });
-}
 
 function initialiserRewards() {
     let btnSpin = document.getElementById("btn-spin");
     if (btnSpin) {
         btnSpin.onclick = tournerRoue;
     }
-    initialiserEchangesAvantages();
     chargerRewards();
 }
 

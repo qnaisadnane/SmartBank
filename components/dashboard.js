@@ -45,7 +45,6 @@ function chargerDashboard(){
             '<span class="history-item-amount ' + couleur + '">' + signe + t.montant.toFixed(2) + ' EUR</span>';
         conteneur.appendChild(item);
     }
-    // Bouton hero vers la page offres
     let btnOffres = document.getElementById("hero-btn-offres");
     if (btnOffres) {
         btnOffres.onclick = function() {
